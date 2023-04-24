@@ -3,8 +3,9 @@ import os
 import random
 
 import discord
-from dotenv import load_dotenv
+"from dotenv import load_dotenv"
 
+'''
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
@@ -51,3 +52,30 @@ async def on_message(message):
         await message.channel.send(response)
     
 client.run(TOKEN)
+'''
+
+#instantiate a discord client
+client = discord.Client(intents=(discord.Intents.default()))
+
+@client.event
+async def on_ready():
+    print(f"you have logged in as {client}")
+
+#called whethere there is a message in the chat
+@client.event
+async def on_message(message):
+    if message.author == cleint.user:
+        return
+    
+    if message.content.startswith("ya"):
+        await message.channel.send("yeet")
+
+
+
+
+BOT_TOKEN = "YOUR_TOKEN HERE"
+"client.run(BOT_TOKEN)"
+
+
+
+
