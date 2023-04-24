@@ -1,6 +1,7 @@
+# PreCryptoBot
 A discord bot to interact with discord users to predict crpyto currencies. Help make users make financial decisions when investing into crpyto.
 
-## Description
+### Description
 An interactive bot to predict cryptocurrency prices
 
 
