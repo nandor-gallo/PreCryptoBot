@@ -64,7 +64,7 @@ async def on_ready():
 #called whethere there is a message in the chat
 @client.event
 async def on_message(message):
-    if message.author == cleint.user:
+    if message.author == client.user:
         return
     
     if message.content.startswith("ya"):
