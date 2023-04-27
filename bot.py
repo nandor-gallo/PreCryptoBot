@@ -1,22 +1,18 @@
-# bot.py
-import os
-import random
-
 import discord
+import requests
+import json
+import os
 from dotenv import load_dotenv
-
-
+# Insert your Discord bot token and CoinMarketCap API key here
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
+API_KEY = os.getenv('API_KEY')
 
 
-intent = discord.Intents
-intents = [discord.Intents.dm_messages, discord.Intents.dm_typing, intent.guild_messages, intent.guilds, ]
-
-
-
-client = discord.Client(intents=(discord.Intents.default()))
+# Authenticate your bot token with Discord
+intents = discord.Intents.all()
+client = discord.Client(intents = intents)
 
 @client.event
 async def on_ready():
@@ -34,27 +30,34 @@ async def on_member_join(member):
     )
 
 @client.event
+async def on_ready():
+    print('Logged in as {0.user}'.format(client))
+
+# Listen for the $price command and retrieve the latest Bitcoin price from CoinMarketCap
+@client.event
 async def on_message(message):
-    if message.author == client.user:
-        return
+    if message.content.startswith('$price'):
+        # Split the user's message into tokens and extract the desired cryptocurrency name
+        tokens = message.content.split()
+        if len(tokens) < 2:
+            await message.channel.send('Please specify a cryptocurrency name')
+            return
+        crypto_name = tokens[1]
 
-    brooklyn_99_quotes = [
-        'I\'m the human form of the 💯 emoji.',
-        'Bingpot!',
-        (
-            'Cool. Cool cool cool cool cool cool cool, '
-            'no doubt no doubt no doubt no doubt.'
-        ),
-    ]
+        # Make an API call to CoinMarketCap to retrieve the latest cryptocurrency data
+        url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
+        params = {'symbol': crypto_name.upper()}
+        headers = {'Accepts': 'application/json', 'X-CMC_PRO_API_KEY': API_KEY}
+        response = requests.get(url, headers=headers, params=params)
+        data = json.loads(response.text)
 
-    if message.content == '99!':
-        response = random.choice(brooklyn_99_quotes)
-        await message.channel.send(response)
-    
+        # Extract the latest cryptocurrency price and send it back to the user
+        if 'status' in data and data['status']['error_code'] == 400:
+            await message.channel.send(f'Error: {data["error"]["error_message"]}')
+        else:
+            crypto_data = data['data'][crypto_name.upper()]
+            crypto_price = crypto_data['quote']['USD']['price']
+            await message.channel.send(f"{crypto_name.upper()} price: ${crypto_price:.2f}")
+
+# Run the bot
 client.run(TOKEN)
-
-
-
-
-
-
