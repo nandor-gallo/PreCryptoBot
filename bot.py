@@ -49,7 +49,6 @@ async def on_message(message):
             await message.channel.send('Please specify a cryptocurrency name')
             return
         crypto_name = tokens[1]
-
         # Make an API call to CoinMarketCap to retrieve the latest cryptocurrency data
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
         params = {'symbol': crypto_name.upper(),'convert_id': conversionID}
