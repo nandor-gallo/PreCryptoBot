@@ -57,7 +57,7 @@ async def on_message(message):
         else:
             crypto_data = data['data'][crypto_name.upper()]
             crypto_price = crypto_data['quote']['USD']['price']
-            await message.channel.send(f"{crypto_name.upper()} price: ${crypto_price:.2f}")
+            await message.channel.send(f"{crypto_name.upper()} price: ${crypto_price:.8f}")
 
 # Run the bot
 client.run(TOKEN)
