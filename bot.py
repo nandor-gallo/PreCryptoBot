@@ -36,6 +36,9 @@ async def on_ready():
 # Listen for the $price command and retrieve the latest Bitcoin price from CoinMarketCap
 @client.event
 async def on_message(message):
+    #Conversion ID for dollars in CAD
+    conversionID = 2784
+    
     if message.content.startswith('$help'):
         await message.channel.send("```Here are a list of commands you can use: \n\n$price [symbol] - find out latest price of crpyto\n$change [symbol] - find out latest coin changes within 24H 7D 30D```")
 
@@ -49,7 +52,7 @@ async def on_message(message):
 
         # Make an API call to CoinMarketCap to retrieve the latest cryptocurrency data
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
-        params = {'symbol': crypto_name.upper()}
+        params = {'symbol': crypto_name.upper(),'convert_id': conversionID}
         headers = {'Accepts': 'application/json', 'X-CMC_PRO_API_KEY': API_KEY}
         response = requests.get(url, headers=headers, params=params)
         data = json.loads(response.text)
@@ -59,7 +62,7 @@ async def on_message(message):
             await message.channel.send(f'Error: {data["error"]["error_message"]}')
         else:
             crypto_data = data['data'][crypto_name.upper()]
-            crypto_price = crypto_data['quote']['USD']['price']
+            crypto_price = crypto_data['quote'][str(conversionID)]['price']
             await message.channel.send(f"{crypto_name.upper()} price: ${crypto_price:.8f}")
 
     if message.content.startswith('$change'):
@@ -72,7 +75,7 @@ async def on_message(message):
 
         # Make an API call to CoinMarketCap to retrieve the latest cryptocurrency data
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
-        params = {'symbol': crypto_name.upper()}
+        params = {'symbol': crypto_name.upper(),'convert_id': conversionID}
         headers = {'Accepts': 'application/json', 'X-CMC_PRO_API_KEY': API_KEY}
         response = requests.get(url, headers=headers, params=params)
         data = json.loads(response.text)
@@ -82,10 +85,10 @@ async def on_message(message):
             await message.channel.send(f'Error: {data["error"]["error_message"]}')
         else:
             crypto_data = data['data'][crypto_name.upper()]
-            crypto_change1D = crypto_data['quote']['USD']['percent_change_24h']
-            crypto_change7D = crypto_data['quote']['USD']['percent_change_7d']
-            crypto_change30D = crypto_data['quote']['USD']['percent_change_30d']
-            await message.channel.send(f"{crypto_name.upper()} changes after [ 24H {crypto_change1D:.2f}% | 7 Days {crypto_change7D:.2f}% | 30 Days {crypto_change30D}]")
+            crypto_change1D = crypto_data['quote'][str(conversionID)]['percent_change_24h']
+            crypto_change7D = crypto_data['quote'][str(conversionID)]['percent_change_7d']
+            crypto_change30D = crypto_data['quote'][str(conversionID)]['percent_change_30d']
+            await message.channel.send(f"{crypto_name.upper()} changes after [ 24H {crypto_change1D:.2f}% | 7 Days {crypto_change7D:.2f}% | 30 Days {crypto_change30D:.2f}%]")
 
 # Run the bot
 client.run(TOKEN)
