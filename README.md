@@ -1,5 +1,7 @@
 <img src="resources/git_image.JPG" height="500" width="500">
+
 ## Description
+
 A discord bot to interact with discord users to predict crpyto currencies. Help users make financial decisions when investing into crpyto.
 
 ## Technologies
